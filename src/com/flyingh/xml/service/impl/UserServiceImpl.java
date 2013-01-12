@@ -1,10 +1,12 @@
 package com.flyingh.xml.service.impl;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
 
@@ -48,6 +50,32 @@ public class UserServiceImpl implements UserService {
 			eventType = pullParser.next();
 		}
 		return users;
+	}
+
+	@Override
+	public void save(List<User> users, OutputStream os) throws Exception {
+		XmlSerializer serializer = Xml.newSerializer();
+		serializer.setOutput(os, "utf-8");
+		serializer.startDocument("utf-8", true);
+		for (User user : users) {
+			serializer.startTag(null, "users");
+
+			serializer.startTag(null, "user");
+			serializer.attribute(null, "id", String.valueOf(user.getId()));
+			
+			serializer.startTag(null, "name");
+			serializer.text(user.getName());
+			serializer.endTag(null, "name");
+
+			serializer.startTag(null, "age");
+			serializer.text(String.valueOf(user.getAge()));
+			serializer.endTag(null, "age");
+
+			serializer.endTag(null, "user");
+
+			serializer.endTag(null, "users");
+		}
+		serializer.endDocument();
 	}
 
 }
